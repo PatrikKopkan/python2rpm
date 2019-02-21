@@ -1,0 +1,65 @@
+%global         pypi_name {{pypi_name}}
+{% if modulename %}
+%global         module_name {{module_name}}
+{% endif %}
+
+
+{% block variable_section %}
+{% endblock %}
+
+Name:           python-%{pypi_name}
+Version:        {{version}}
+Release:        {{release}}%{?dist}
+License:        {{type_of_license}}
+{% if url %}
+URL:            {{URL}}
+{% else %}
+URL:            https://pypi.org/project/%{pypi_name}
+{% endif %}
+Source0:        %{pypi_source}
+BuildArch:      noarch
+Summary:        {{summary}}
+
+%{?python_enable_dependency_generator}
+
+%description
+{{description}}
+%package -n python3-%{pypi_name}
+Summary:        %{summary}
+{% for build_require in build_requires%}
+BuildRequires:  {{build_require}}
+{% endfor %}
+%{?python_provide:%python_provide python3-%{pypi_name}}
+
+%description -n python3-%{pypi_name}
+{{description}}
+%prep
+%autosetup -n %{pypi_name}-%{version}
+
+%build
+%py3_build
+
+%install
+%py3_install
+
+%check
+%{__python3} setup.py test
+
+%files -n python3-%{pypi_name}
+{% if license %}
+%license {{license}}
+{% endif %}
+{% if doc %}
+%doc {{doc}}
+{% endif %}
+
+{% if module_name %}
+%{python3_sitelib}/%{module_name}-%{version}-py%{python3_version}.egg-info
+%{python3_sitelib}/%{module_name}.py
+%{python3_sitelib}/__pycache__/%{module_name}.*.py*
+{% else %}
+TODO:
+{% endif %}
+
+%changelog
+[{chagelog}]
