@@ -1,5 +1,4 @@
 import pytest
-import sys
 import os
 import Python2Spec
 from Python2Spec.parsing_pyproject import *
@@ -27,7 +26,7 @@ def test_get_buildrequires(monkeypatch):
         assert get_buildrequires('path') == ['setuptools', 'wheel']
 
 
-def test_get_values_from_pkg_info(monkeypatch):
+def test_get_items_from_pkg_info(monkeypatch):
     def mock_get_file_from_tarball(path, file):
         with open('test_projects/PKG-INFO', 'rb') as f:
             f = f.read()
@@ -40,7 +39,7 @@ def test_get_values_from_pkg_info(monkeypatch):
                     'Description': "pip",
                     }
 
-        assert get_values_from_pkg_info('path') == expected
+        assert get_items_from_pkg_info('path') == expected
 
 
 def test_make_spec(monkeypatch):
@@ -49,7 +48,7 @@ def test_make_spec(monkeypatch):
     def mock_get_buildrequires(*args, **kwargs):
         return '[setuptools, wheel]'
 
-    def mock_get_values_from_pkg_info(*args, **kwargs):
+    def mock_get_items_from_pkg_info(*args, **kwargs):
         return {'URL': 'https://pip.pypa.io/', 'pypi_name': 'pip', 'Version': '19.0.3', 'License': 'MIT',
                 'Summary': 'The PyPA recommended tool for installing Python packages.',
                 'Description': "pip",
@@ -57,7 +56,7 @@ def test_make_spec(monkeypatch):
 
     with monkeypatch.context() as m:
         m.setattr('Python2Spec.parsing_pyproject.get_buildrequires', mock_get_buildrequires)
-        m.setattr('Python2Spec.parsing_pyproject.get_values_from_pkg_info', mock_get_values_from_pkg_info)
+        m.setattr('Python2Spec.parsing_pyproject.get_items_from_pkg_info', mock_get_items_from_pkg_info)
         result = runner.invoke(make_spec, ['path'])
         assert result.exit_code == 2
 

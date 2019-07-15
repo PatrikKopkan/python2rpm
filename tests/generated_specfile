@@ -91,4 +91,5 @@ BuildRequires:  python3dist(wheel)
 
 
 %changelog
-[{chagelog}]
+* Mon Jul 15 2019 name <email> - 19.0.3-1
+- Initial package
