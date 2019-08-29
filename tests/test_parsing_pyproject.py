@@ -8,12 +8,11 @@ from unittest.mock import patch
 
 
 def test_get_file_from_tarball():
-    print(os.curdir)
     for tarball in os.listdir('test_tarballs'):
-        result = get_file_from_tarball('test_tarballs/' + tarball, 'pyproject.toml')
+        tested = get_file_from_tarball('test_tarballs/' + tarball, 'pyproject.toml')
         with open('test_projects/' + tarball.replace('.tar.gz', '') + '/pyproject.toml', 'rb') as f:
-            content = f.read()
-            assert result == content
+            expected = f.read()
+            assert tested == expected
 
 
 def test_get_buildrequires(monkeypatch):
@@ -65,9 +64,4 @@ def test_make_spec(monkeypatch):
                 result = runner.invoke(make_spec, ['test_tarballs/pip-19.0.3.tar.gz'])
                 assert result.exit_code == 0
                 expected = f.read()
-            # print(result.output)
-            # test = result.output
-            # for i, line in enumerate(expected):
-            #     if (test[i] + '\n') != line:
-            #         print(f'{line}:{test[i]}')
         assert mocked_method.call_with(expected)
